@@ -49,7 +49,9 @@ class DataManager_():
     def __init__(self):
         self.logfile_name = None
         # self.LOGDATA_ROOT = os.getenv('CARLA_VR_LOGDATA_PATH')
-        self.LOGDATA_ROOT = "/media/kenta/Extreme SSD/dataset/carla_VR"
+        # self.LOGDATA_ROOT = "/media/kenta/Extreme SSD/dataset/carla_VR"
+        self.LOGDATA_ROOT = "/media/kenta/ExtremePro/dataset/carla_VR"
+        
         
         self.logdata = None
         self.logdata_all_objects = []

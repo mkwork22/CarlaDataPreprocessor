@@ -12,32 +12,71 @@ import numpy as np
 
 from data_manager import DataManager_
 import utility as utils
-
+import settings as sets
 
 class TimeSynclonizerMain_():
     def __init__(self):
-        self.simlog_root_dir = f'/media/kenta/Extreme SSD/dataset/carla_VR'
-        self.simlog_date = f'/230724'
-        self.target_simlog = f'/log_115111'
+        self.simlog_root_dir = sets.SIMDATA_ROOT_DIR
+        self.simlog_date = sets.LOGDATE
+        self.target_simlog = sets.LOGDIR
         self.simlog_dir = f'{self.simlog_root_dir}{self.simlog_date}{self.target_simlog}/' 
-        self.image_dir = f'/home/kenta/ego_exo/common/time_synced_exo/01_walk/exo/cam01/images'
-        self.simlog_fname = f'logdata_07242023_115111.csv'
+        self.image_dir = f'/media/kenta/ExtremePro/ego_exo/common/time_synced_exo/01_walk/exo/cam01/images'
+        self.simlog_fname = f'logdata_08172023_131449.csv'
         
-        self.cam_qr_timesync_result_frame = 5484
-        self.cam_qr_timesync_result_timestamp = 1690213790578
-        self.cam_freq = 1.0/30.0
+        # self.cam_qr_timesync_result_frame_start = 5484
+        # self.cam_qr_timesync_result_timestamp_start = 1690213790578
+        # self.cam_qr_timesync_result_frame_end = None
+        # self.cam_qr_timesync_result_timestamp_end = None
+        
+        self.cam_qr_timesync_result_frame_start = 3804
+        self.cam_qr_timesync_result_timestamp_start = 1692292106638
+        self.cam_qr_timesync_result_frame_end = 25218
+        self.cam_qr_timesync_result_timestamp_end = 1692292820035
+
+        self.cam_freq_ms = (1.0/29.9995) * 1e3
         
         self.output_dir = f'{self.simlog_dir}'
+        self.interp_timestamp = f'interp_timestamp.csv'
         self.output_file = f'timesync_result.csv'
         
         self.sim_to_image_index_list = []
     
     def interp_cam_timestamps(self, max_len):
+        intercept = self.cam_qr_timesync_result_timestamp_start - self.cam_freq_ms*self.cam_qr_timesync_result_frame_start
         frames = [cnt for cnt in range(self.cam_qr_timesync_result_frame, max_len)]
-        timestamps = [(int(self.cam_qr_timesync_result_timestamp) + \
-                       int((self.cam_freq)*1e3)*(cnt-self.cam_qr_timesync_result_frame)) \
-                            for cnt in range(self.cam_qr_timesync_result_frame, max_len)]
-        # diff_timestamps = [int((self.cam_freq)*1e3)*(cnt-self.cam_qr_timesync_result_frame)\
+        timestamps = [int((self.cam_freq_ms)*cnt + intercept) \
+                        for cnt in range(self.cam_qr_timesync_result_frame_start, max_len)]
+        # timestamps = [(int(self.cam_qr_timesync_result_timestamp) + \
+        #                int((self.cam_freq_ms)*1e3)*(cnt-self.cam_qr_timesync_result_frame)) \
+        #                     for cnt in range(self.cam_qr_timesync_result_frame, max_len)]
+        # diff_timestamps = [int((self.cam_freq_ms)*1e3)*(cnt-self.cam_qr_timesync_result_frame)\
+        #                     for cnt in range(self.cam_qr_timesync_result_frame, max_len)]
+        # print(diff_timestamps[:10])
+        return frames, timestamps
+    
+    def estimate_frame_rate(self):
+        diff_frame = self.cam_qr_timesync_result_frame_end - self.cam_qr_timesync_result_frame_start
+        diff_timestamp = self.cam_qr_timesync_result_timestamp_end - self.cam_qr_timesync_result_timestamp_start
+        frame_rate = diff_frame / diff_timestamp
+        time_step = 1.0 / frame_rate
+        intercept = self.cam_qr_timesync_result_timestamp_start - time_step*self.cam_qr_timesync_result_frame_start
+        print("fps:{} ts:{}".format(frame_rate, time_step))
+        return frame_rate, time_step, intercept
+    
+    def interp_cam_timestamps_with_2QRcode(self, max_len):
+        fps, ts, intercept = self.estimate_frame_rate()
+        
+        frames = [cnt for cnt in range(self.cam_qr_timesync_result_frame_start, max_len)]
+        # for cnt in range(self.cam_qr_timesync_result_frame_start, max_len):
+        #     value = ts*cnt + intercept
+        #     print(cnt, value)
+        #     time.sleep(1)
+        timestamps = [int(ts*cnt + intercept) \
+                        for cnt in range(self.cam_qr_timesync_result_frame_start, max_len)]
+        # timestamps = [(int(self.cam_qr_timesync_result_timestamp_start) + \
+        #                int((ts))*(cnt-self.cam_qr_timesync_result_frame_start)) \
+        #                     for cnt in range(self.cam_qr_timesync_result_frame_start, max_len)]
+        # diff_timestamps = [int((self.cam_freq_ms)*1e3)*(cnt-self.cam_qr_timesync_result_frame)\
         #                     for cnt in range(self.cam_qr_timesync_result_frame, max_len)]
         # print(diff_timestamps[:10])
         return frames, timestamps
@@ -46,7 +85,13 @@ class TimeSynclonizerMain_():
         diff_timestamp = timestamp_list - target_timestamp
         index = np.argmin(np.abs(diff_timestamp))
         # print("nearest_index:{}".format(index))
-        return self.cam_qr_timesync_result_frame + index
+        return self.cam_qr_timesync_result_frame_start + index
+    
+    def output_cam_timestamp_interp_result(self, frames, timestamps):
+        result = [frames, timestamps]
+        result_np = np.array(result).T
+        np.savetxt(f'{self.output_dir}{self.interp_timestamp}', result_np, fmt ='%d')
+        # np.savetxt(f'./tmp/cam_timestamp_interp_result.csv', result_np, fmt ='%d')
         
     def output_result(self, SimDataHandler):
         result = [SimDataHandler.frames, self.sim_to_image_index_list]
@@ -64,7 +109,11 @@ class TimeSynclonizerMain_():
         image_list = utils.get_jpg_file_list(self.image_dir)
         image_list = [image_path.replace(f'{self.image_dir}/', '').replace('.jpg','') for image_path in image_list]
         # print(image_list)
-        frames, interp_timestamps = self.interp_cam_timestamps(int(image_list[-1]))
+        if self.cam_qr_timesync_result_frame_end is None:
+            frames, interp_timestamps = self.interp_cam_timestamps(int(image_list[-1]))
+        else:
+            frames, interp_timestamps = self.interp_cam_timestamps_with_2QRcode(int(image_list[-1]))
+        self.output_cam_timestamp_interp_result(frames, interp_timestamps)
 
         # Find nearest frames
         sim_timestamp_pre  = SimDataHandler.timestamps[0]
@@ -88,6 +137,8 @@ class TimeSynclonizerMain_():
         # print(self.sim_to_image_index_list)
         
         self.output_result(SimDataHandler)
+
+        print('min_frame:{} max_frame:{}'.format(min(self.sim_to_image_index_list), max(self.sim_to_image_index_list)))
     
     
 def parse_args():

@@ -21,6 +21,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 import data_manager
 import utility as utils
+import settings as sets
 
 GENERATE_ANIM_WITH_IMAGE = False
 
@@ -316,7 +317,8 @@ if __name__ == "__main__":
     # target_date = '230427'
     # target_date = '230511'
     # target_date = '230608'
-    target_date = '230724'
+    # target_date = '230724'
+    target_date = '230817'
     target_dir_name = ''
     
     # Obtain csv filename lists
@@ -324,9 +326,14 @@ if __name__ == "__main__":
     fpath_list = utils.get_csv_file_list(target_dir)
     
     # TODO:Debug:
-    fpath = f'/media/kenta/Extreme SSD/dataset/carla_VR/230724/log_115111/logdata_07242023_115111.csv'
+    # Change date to 8 digits
+    date_8digits = f'{sets.LOGDATE[2:6]}20{sets.LOGDATE[:2]}'
+    print(date_8digits)
+    time_6digits = f'{sets.LOGDIR[4:10]}'
+
+    fpath = f'{sets.SIMDATA_ROOT_DIR}{sets.LOGDATE}{sets.LOGDIR}logdata_{date_8digits}_{time_6digits}.csv'
+    print(fpath)
     execute(target_date, target_dir_name, target_dir, fpath)
-    
     
     # # Single processing
     # for fpath in fpath_list:

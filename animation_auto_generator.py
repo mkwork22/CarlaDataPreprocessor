@@ -9,6 +9,7 @@ import cv2
 # import rospy
 import math
 import pickle
+import traceback
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -19,7 +20,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from multiprocessing import Process
 from concurrent.futures import ProcessPoolExecutor
 
-import analyzer_setting as sets
+# import analyzer_setting as sets
 import data_manager
 
 import utility as utils
@@ -43,13 +44,13 @@ class Animation_():
         self.fig0.suptitle("ObjectVisualizer")
         self.ax0 = [self.fig0.add_subplot(1, 1, 1),]
         
-        if sets.GENERATE_ANIM_WITH_IMAGE:
-            self.fig0 = plt.figure(figsize=(10, 6))
-            self.fig0.canvas.draw()
-            self.fig0.suptitle("ObjectVisualizer")
-            self.ax0 = [self.fig0.add_subplot(1, 2, 1),
-                        self.fig0.add_subplot(2, 2, 2),
-                        self.fig0.add_subplot(2, 2, 4)]
+        # if sets.GENERATE_ANIM_WITH_IMAGE:
+        #     self.fig0 = plt.figure(figsize=(10, 6))
+        #     self.fig0.canvas.draw()
+        #     self.fig0.suptitle("ObjectVisualizer")
+        #     self.ax0 = [self.fig0.add_subplot(1, 2, 1),
+        #                 self.fig0.add_subplot(2, 2, 2),
+        #                 self.fig0.add_subplot(2, 2, 4)]
 
         # Plot planning result
         # self.fig1, self.ax1 = plt.subplots(nrows=4, sharex=True, figsize=(8, 6))
@@ -351,7 +352,7 @@ class Animation_():
             self.fig0, self.update_anim, interval=1, frames=DataManager.data_size)
         print("save dir:", savedir)
         # Save animation (Requirement:ffmpeg (You can get by "sudo apt install ffmpeg")))
-        ani.save(savedir+"animation.mp4", writer="ffmpeg", fps=10)
+        ani.save(savedir+"animation.mp4", writer="ffmpeg", fps=20)
     
     
 def execute(target_date, target_dir_name, target_dir, fpath):
@@ -381,8 +382,8 @@ def execute(target_date, target_dir_name, target_dir, fpath):
         del DataManager, animator
         
     except Exception as e:
+        traceback.print_exc()
         print("Error occured:", e)
-        pass
         
 if __name__ == "__main__":
     DataManager = data_manager.DataManager_()
@@ -392,12 +393,21 @@ if __name__ == "__main__":
     # target_date = '230427'
     # target_date = '230511'
     # target_date = '230608'
-    target_date = '230724'
+    # target_date = '230724'
+    target_date = '230817' 
+    
     target_dir_name = ''
     
     # Obtain csv filename lists
     target_dir = DataManager.LOGDATA_ROOT + '/' + target_date
     fpath_list = utils.get_csv_file_list(target_dir)
+    print(fpath_list)
+    
+    
+    # Single processing
+    # for fpath in fpath_list:
+    #     execute(target_date, target_dir_name, target_dir, fpath)
+    
     
     # Multi-processing
     processes = []
@@ -407,4 +417,3 @@ if __name__ == "__main__":
             print("Start multi-processing")
             executor.submit(execute, target_date, target_dir_name, target_dir, fpath)
             
-            # execute(target_date, target_dir_name, target_dir, fpath)
