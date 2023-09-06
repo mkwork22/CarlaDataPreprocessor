@@ -394,14 +394,16 @@ if __name__ == "__main__":
     # target_date = '230511'
     # target_date = '230608'
     # target_date = '230724'
-    target_date = '230817' 
+    # target_date = '230817' 
+    # target_date = '08212023'
+    # target_date = '08242023'  
+    target_date = '09012023'  
     
     target_dir_name = ''
     
     # Obtain csv filename lists
     target_dir = DataManager.LOGDATA_ROOT + '/' + target_date
     fpath_list = utils.get_csv_file_list(target_dir)
-    print(fpath_list)
     
     
     # Single processing

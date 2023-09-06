@@ -4,6 +4,8 @@ import os
 import traceback
 from tqdm import tqdm
 
+import settings as sets
+
 freq_sec = 1/31
 global timestamp
 global frame_id
@@ -127,14 +129,18 @@ def read_qr_code_double(idx, img):
 # time_synced_data_dir = '/home/kenta/ego_exo/common/time_synced_exo'
 data_dir = '/media/kenta/ExtremePro/dataset/ego_exo/230817'
 time_synced_data_dir = '/media/kenta/ExtremePro/ego_exo/common/time_synced_exo'
-sequence_name = '01_walk'
+# sequence_name = '03_walk'
+sequence_name = sets.BIG_SEQUENCE
 
 # ##--------read cam01--------------------------------------------
 cam = 'cam01'; start_idx = 1990; end_idx = 2080
 
 # cam_list = ['cam01', 'cam02', 'cam03', 'cam04', 'cam05', 'cam06', 'cam07', 'cam08']
 cam_list = ['cam01', 'cam01']
-start_idx_list = [3800, 25200]
+# start_idx_list = [3800, 25200] # celine
+# start_idx_list = [7430, 23560] # nathaniel
+# start_idx_list = [3940, 21400] # darren
+start_idx_list = [4420, 20840] # dan
 
 
 ## For Simulator to GoPro timesync
@@ -204,6 +210,7 @@ for cam, start_idx in zip(cam_list, start_idx_list):
 
     print(f'{cam}:{extracted_timestamps}')
     print(extracted_timestamps[1])
+    # extracted_infos.append(f'{cam}:{extracted_timestamps[1]}')
     extracted_infos.append(f'{cam}:{extracted_timestamps[1]}')
     # start_idx = extracted_frames[-1]
     # end_idx = extracted_frames[-1] + 1000

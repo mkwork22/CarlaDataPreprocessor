@@ -262,9 +262,14 @@ class Animation_():
         #     self.fig0, self.update_anim, interval=1, frames=DataManager.data_size)
         print("save dir:", savedir)
 
-        for frame in range(DataManager.data_size):
-            self.output_image(savedir, frame)
+        # === Single Processing ===
+        # for frame in range(DataManager.data_size):
+        #     self.output_image(savedir, frame)
     
+        with ProcessPoolExecutor(max_workers=10) as executor:
+            for frame in range(DataManager.data_size):
+                executor.submit(self.output_image, savedir, frame)
+
     
 def execute(target_date, target_dir_name, target_dir, fpath):
     # === Create instance ===

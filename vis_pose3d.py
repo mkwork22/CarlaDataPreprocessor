@@ -38,7 +38,8 @@ def get_target_file_list(dir, ext):
 
 class Visualzier_():
     def __init__(self):
-        self.target_dir = f'/home/kenta/ego_exo/main/01_walk/002_walk/processed_data/contact_poses3d'
+        # self.target_dir = f'/home/kenta/ego_exo/main/01_walk/002_walk/processed_data/contact_poses3d'
+        self.target_dir = f'{sets.POSE_DATA_ROOT_DIR}{sets.BIG_SEQUENCE}{sets.SUB_SEQUENCE}processed_data/contact_poses3d'
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
         
@@ -100,7 +101,6 @@ class Visualzier_():
         
 def main():
     visualizer = Visualzier_()
-    
     visualizer.execute()
     
 if __name__ == '__main__':

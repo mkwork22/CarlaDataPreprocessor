@@ -20,20 +20,41 @@ class TimeSynclonizerMain_():
         self.simlog_date = sets.LOGDATE
         self.target_simlog = sets.LOGDIR
         self.simlog_dir = f'{self.simlog_root_dir}{self.simlog_date}{self.target_simlog}/' 
-        self.image_dir = f'/media/kenta/ExtremePro/ego_exo/common/time_synced_exo/01_walk/exo/cam01/images'
-        self.simlog_fname = f'logdata_08172023_131449.csv'
+        # self.image_dir = f'/media/kenta/ExtremePro/ego_exo/common/time_synced_exo/01_walk/exo/cam01/images'
+        self.image_dir = f'{sets.IMAGE_DATA_ROOT_DIR}{sets.IMAGE_DATA_TARGET_DIR}'
+        # self.simlog_fname = f'logdata_08172023_131449.csv'
+        self.simlog_fname = sets.SIMLOG_FNAME
         
         # self.cam_qr_timesync_result_frame_start = 5484
         # self.cam_qr_timesync_result_timestamp_start = 1690213790578
         # self.cam_qr_timesync_result_frame_end = None
         # self.cam_qr_timesync_result_timestamp_end = None
         
-        self.cam_qr_timesync_result_frame_start = 3804
-        self.cam_qr_timesync_result_timestamp_start = 1692292106638
-        self.cam_qr_timesync_result_frame_end = 25218
-        self.cam_qr_timesync_result_timestamp_end = 1692292820035
+        # # 0818 celine timesync info
+        # self.cam_qr_timesync_result_frame_start = 3804
+        # self.cam_qr_timesync_result_timestamp_start = 1692292106638
+        # self.cam_qr_timesync_result_frame_end = 25218
+        # self.cam_qr_timesync_result_timestamp_end = 1692292820035
+        
+        # # 0818 nathaniel timesync info
+        # self.cam_qr_timesync_result_frame_start = 7433
+        # self.cam_qr_timesync_result_timestamp_start = 1692295119121
+        # self.cam_qr_timesync_result_frame_end = 23569
+        # self.cam_qr_timesync_result_timestamp_end = 1692295656246
 
-        self.cam_freq_ms = (1.0/29.9995) * 1e3
+        # # 0818 darren timesync info
+        # self.cam_qr_timesync_result_frame_start = 3948
+        # self.cam_qr_timesync_result_timestamp_start = 1692297196401
+        # self.cam_qr_timesync_result_frame_end = 21405
+        # self.cam_qr_timesync_result_timestamp_end = 1692297778278
+        
+        # 0818 darren timesync info
+        self.cam_qr_timesync_result_frame_start = 4438
+        self.cam_qr_timesync_result_timestamp_start = 1692298554054
+        self.cam_qr_timesync_result_frame_end = 20847
+        self.cam_qr_timesync_result_timestamp_end = 1692299101340
+        
+        self.cam_freq_ms = (1.0/30.00000) * 1e3
         
         self.output_dir = f'{self.simlog_dir}'
         self.interp_timestamp = f'interp_timestamp.csv'
@@ -107,8 +128,9 @@ class TimeSynclonizerMain_():
         
         # interpolate timestamps in every GoPro images
         image_list = utils.get_jpg_file_list(self.image_dir)
-        image_list = [image_path.replace(f'{self.image_dir}/', '').replace('.jpg','') for image_path in image_list]
+        image_list = [image_path.replace(f'{self.image_dir}', '').replace('.jpg','') for image_path in image_list]
         # print(image_list)
+        # print(self.image_dir)
         if self.cam_qr_timesync_result_frame_end is None:
             frames, interp_timestamps = self.interp_cam_timestamps(int(image_list[-1]))
         else:

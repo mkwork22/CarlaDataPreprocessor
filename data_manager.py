@@ -106,14 +106,14 @@ class DataManager_():
         self.timestamps = np.unique(self.logdata[:,1])
         # print(len(self.frames), "::", len(self.timestamps))
     
-    def read_logdata(self):
+    def read_logdata(self, meta):
         print("loading data:", self.logfile_name)
         self.logdata, status = self.load_csv_data(self.logfile_name)
         self.data_size = self.logdata[-1, 0]
         # self.logdata, status = self.load_csv_data_with_std_func(self.logfile_name)
         # self.data_size = self.logdata[-1][0]
         # print("data size:", self.data_size)
-        self.reshape_logdata()
+        self.reshape_logdata(meta)
         self.store_timestamp_list()
         # for it in self.logdata_all_objects:
         #     print(it)
@@ -184,13 +184,14 @@ class DataManager_():
             obj.map_name = str(data[-1])
             
         return obj
+
         
-    def reshape_logdata(self):
+    def reshape_logdata(self, meta):
         loop_idx = 0
         tmp_container = []
         
         # === Construct object information ===
-        for data in self.logdata:     
+        for data in self.logdata:   
             # Find ego-avatar
             if data[4]=='walker.vravatar.egowalker':
                 # print(data[0])

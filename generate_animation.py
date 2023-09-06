@@ -10,7 +10,6 @@ from data_manager import DataManager_
 import utility as utils
 import settings as sets
 
-
 class AnimationGenerator_():
     def __init__(self):
         self.simdata_root_dir = sets.SIMDATA_ROOT_DIR
@@ -29,7 +28,7 @@ class AnimationGenerator_():
         self.pose_image_root_dir = f'{sets.POSE_DATA_ROOT_DIR}{sets.BIG_SEQUENCE}{sets.SUB_SEQUENCE}'
         # self.target_cam = '/cam01/rgb/'
         # self.pose_image_path = f'{self.pose_image_root_dir}{self.target_cam}'
-        self.pose_image_path = f'{self.pose_image_root_dir}{sets.SUB_DIR}'
+        self.pose_image_path = f'{self.pose_image_root_dir}{sets.POSE_SUB_DIR}'
         
 
         self.output_path = f'{self.simdata_root_dir}{self.logdate}{self.logdir}'
@@ -50,11 +49,10 @@ class AnimationGenerator_():
             image3_path = f'{self.pose3d_image_path}{(int(frame_list[1]-pose_init_frame)):05d}.png'  # Pose3d image
             image4_path = f'{self.carla_1st_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
             image5_path = f'{self.carla_3rd_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
-            # image_paths = [image1_path, image2_path, image3_path]
+            image_paths = [image1_path, image2_path, image3_path]
             # image_paths = [image5_path, image2_path, image3_path]
             # image_paths = [image5_path, image2_path, image3_path]
-
-            image_paths = [image0_path, image1_path]
+            # image_paths = [image0_path, image1_path]
 
             images = [Image.open(path) for path in image_paths]
             widths, heights = zip(*(i.size for i in images))
@@ -73,49 +71,16 @@ class AnimationGenerator_():
                 
             # Save frame image
             frame_filename = os.path.join(self.processed_image_path, f'{int(frame_list[0]):05d}.png')
+            # print(frame_filename)
             result_image.save(frame_filename)
             
     def generate_mp4(self, timesync_info):
         pose_init_frame = int(timesync_info[0,1]) - 1
-        start_frame = 5 # compensate transmittor delay (wireless transmission)
-        
-        # # for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
+        start_frame = sets.CONST_SYS_DELAY # compensate transmittor delay (wireless transmission)
+
         # for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
-        #     if (int(frame_list[0])+start_frame) < len(timesync_info) - 1:
-        #     # if (int(frame_list[0])+start_frame) < 300:
-        #         # === Generate mp4 data ===
-        #         # print("SimFrame:{} | PoseFrame:{}".format((int(frame_list[0])+start_frame), (int(frame_list[1])-pose_init_frame)))
-        #         # print(f'{self.sim_image_path}{(int(frame_list[0])+start_frame):05d}.png')
-        #         image0_path = f'{self.pose_image_path}{(int(frame_list[1])-pose_init_frame):05d}.jpg' # Basic GoPro image
-        #         image1_path = f'{self.sim_image_path}{(int(frame_list[0])+start_frame):05d}.png'  # Simulation BEV image
-        #         image2_path = f'{self.pose_image_path}{(int(frame_list[1])-pose_init_frame):05d}.jpg'  # Pose image
-        #         image3_path = f'{self.pose3d_image_path}{(int(frame_list[1]-pose_init_frame)):05d}.png'  # Pose3d image
-        #         image4_path = f'{self.carla_1st_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
-        #         image5_path = f'{self.carla_3rd_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
-        #         # image_paths = [image1_path, image2_path, image3_path]
-        #         # image_paths = [image5_path, image2_path, image3_path]
-        #         # image_paths = [image5_path, image2_path, image3_path]
-
-        #         image_paths = [image0_path, image1_path]
-
-        #         images = [Image.open(path) for path in image_paths]
-        #         widths, heights = zip(*(i.size for i in images))
-                
-        #         # Fit aspect ratio
-        #         max_height = max(heights)
-        #         resized_images = [image.resize((int(width * max_height / height), max_height)) for image, width, height in zip(images, widths, heights)]
-
-        #         # Resize image
-        #         total_width = sum([image.width for image in resized_images])
-        #         result_image = Image.new('RGB', (total_width, max_height))
-        #         x_offset = 0
-        #         for image in resized_images:
-        #             result_image.paste(image, (x_offset, 0))
-        #             x_offset += image.width
-                    
-        #         # Save frame image
-        #         frame_filename = os.path.join(self.processed_image_path, f'{int(frame_list[0]):05d}.png')
-        #         result_image.save(frame_filename)
+        #     self.generate_frame(frame_list, start_frame, pose_init_frame, timesync_info)
+        
         with ProcessPoolExecutor(max_workers=20) as executor:
             for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
                 executor.submit(self.generate_frame, frame_list, start_frame, pose_init_frame, timesync_info)
