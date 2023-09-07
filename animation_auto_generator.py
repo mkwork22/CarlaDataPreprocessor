@@ -395,18 +395,18 @@ if __name__ == "__main__":
     # target_date = '230608'
     # target_date = '230724'
     # target_date = '230817' 
-    # target_date = '08212023'
+    target_date = '230821'
     # target_date = '08242023'  
-    target_date = '09012023'  
+    # target_date = '09012023'  
     
     target_dir_name = ''
     
     # Obtain csv filename lists
     target_dir = DataManager.LOGDATA_ROOT + '/' + target_date
-    fpath_list = utils.get_csv_file_list(target_dir)
+    fpath_list = utils.get_log_csv_file_list(target_dir)
     
     
-    # Single processing
+    # # Single processing
     # for fpath in fpath_list:
     #     execute(target_date, target_dir_name, target_dir, fpath)
     

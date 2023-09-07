@@ -64,6 +64,8 @@ def extract_frames(raw_data):
 
 def extract_scenario_frames(frames):
     diff_threshold = 10
+    buffer_start_frame = 100
+    buffer_end_frame = 80
     start_frame = None
     end_frame = None
     start_frames = []
@@ -77,8 +79,8 @@ def extract_scenario_frames(frames):
         if diff >= diff_threshold or i >= len(frames)-1:
             # print(frames[i])
             end_frame = frames[i-1]
-            start_frames.append(start_frame-50)
-            end_frames.append(min(end_frame+40, frames[-1]))
+            start_frames.append(start_frame-buffer_start_frame)
+            end_frames.append(min(end_frame+buffer_end_frame, frames[-1]))
             
             print(start_frame, end_frame)
             # Deinit

@@ -29,7 +29,7 @@ def get_csv_file_list(dir):
 
 def get_log_csv_file_list(dir):
     pattern = os.path.join(dir, '**', 'logdata*.csv')
-    fpath_list = glob.glob(pattern, recursive=True)
+    fpath_list = sorted(glob.glob(pattern, recursive=True))
     return fpath_list
 
 def get_jpg_file_list(dir):

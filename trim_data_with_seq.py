@@ -115,7 +115,7 @@ def execute(target_date, target_dir, fpath_list, meta):
     try:
         # Load csv data
         DataManager.logfile_name = target_file_name_with_path
-        DataManager.read_logdata(meta)
+        DataManager.read_logdata()
         
         # Trim raw data according to setting meta file
         trimmed_data_list = trimmer(DataManager, meta)
@@ -157,8 +157,8 @@ if __name__ == "__main__":
     # target_date = '230724'
     # target_date = '230817'
     # target_date = '230821'
-    target_date = '230824'
-    # target_date = '230901'
+    # target_date = '230824'
+    target_date = '230901'
 
 
     # Obtain csv filename lists
