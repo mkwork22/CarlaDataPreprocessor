@@ -106,14 +106,14 @@ class DataManager_():
         self.timestamps = np.unique(self.logdata[:,1])
         # print(len(self.frames), "::", len(self.timestamps))
     
-    def read_logdata(self, meta):
+    def read_logdata(self):
         print("loading data:", self.logfile_name)
         self.logdata, status = self.load_csv_data(self.logfile_name)
         self.data_size = self.logdata[-1, 0]
         # self.logdata, status = self.load_csv_data_with_std_func(self.logfile_name)
         # self.data_size = self.logdata[-1][0]
         # print("data size:", self.data_size)
-        self.reshape_logdata(meta)
+        self.reshape_logdata()
         self.store_timestamp_list()
         # for it in self.logdata_all_objects:
         #     print(it)
@@ -186,7 +186,7 @@ class DataManager_():
         return obj
 
         
-    def reshape_logdata(self, meta):
+    def reshape_logdata(self):
         loop_idx = 0
         tmp_container = []
         

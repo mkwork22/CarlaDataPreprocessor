@@ -74,12 +74,12 @@ def set_parked_vehicle(logdata):
             parked_vehicle_data[7] = 0.8
             parked_vehicle_data[8] = 0
             parked_vehicle_data[9] = 0
-            parked_vehicle_data[10] = 0.0
+            parked_vehicle_data[10] = -90.0
             parked_vehicle_data[11] = 0.0
             parked_vehicle_data[12] = 0.0
             parked_vehicle_data[13] = 0.0
-            parked_vehicle_data[20] = 1.8
-            parked_vehicle_data[21] = 4.7
+            parked_vehicle_data[20] = 4.7
+            parked_vehicle_data[21] = 1.8
             parked_vehicle_data[22] = 1.6
             # print(parked_vehicle_data)
 
@@ -156,8 +156,8 @@ if __name__ == "__main__":
     # target_date = '230608'
     # target_date = '230724'
     # target_date = '230817'
-    target_date = '230821'
-    # target_date = '230824'
+    # target_date = '230821'
+    target_date = '230824'
     # target_date = '230901'
 
 
