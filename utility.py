@@ -24,7 +24,8 @@ def get_time():
     return dt_string
 
 def get_csv_file_list(dir):
-    fpath_list = sorted(glob.glob(dir + "/**/*.csv", recursive=True))
+    fpath_list = sorted(glob.glob(dir + "/**/**/*.csv", recursive=True))
+    fpath_list.extend(sorted(glob.glob(dir + "/**/*-frames_first*.txt", recursive=True)))
     return fpath_list
 
 def get_log_csv_file_list(dir):
