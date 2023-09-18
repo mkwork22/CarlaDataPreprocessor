@@ -41,7 +41,7 @@ def rotate_point(point, angle, pivot):
 Animation
 '''
 class Animation_():
-    def __init__(self, args):
+    def __init__(self, args,random_rotation):
         # Data
         self.DataManager = None
         self.args = args
@@ -53,8 +53,8 @@ class Animation_():
         self.ax0 = [self.fig0.add_subplot(1, 1, 1),]
 
         # Random axis rotation
-        self.random_rotation = np.random.uniform(0, 2 * np.pi)
-        print(f"self.random_rotation: {self.random_rotation}")
+        self.random_rotation = random_rotation
+        print(f"self.random_rotation: {random_rotation}")
 
         # Plot planning result
         self.rect_0 = patches.Rectangle((0-4.8/2+1.0, 0-1.8/2), 4.8, 1.8, angle=0, ec='r', fill=True, fc="r")  # ego-vehicle (ROH=1.0mとする)
@@ -131,11 +131,30 @@ class Animation_():
 
         # fixed plotting bounds
         if args.vr:
-            self.ax0[0].set_xlim(295, 315)
-            self.ax0[0].set_ylim(103, 123)
+            self.ax0[0].set_xlim(290, 320)
+            self.ax0[0].set_ylim(98, 128)
+            # self.ax0[0].set_xlim(295, 315)
+            # self.ax0[0].set_ylim(103, 123)
         else:
-            self.ax0[0].set_xlim(400, 1400)
-            self.ax0[0].set_ylim(1000, 2000)
+            map_name_id = self.map_name.split('_')[1]
+            map_name_id_to_bounds = {
+                    '0': [100, 1500, 800, 2200],
+                    '1': [100, 1500, 800, 2200],
+                    '10': [100, 1500, 800, 2200],
+                    '2': [000, 1600, 700, 2300],
+                    '3': [000, 1600, 700, 2300],
+                    '4': [200, 1600, 800, 2200],
+                    '5': [000, 1800, 400, 2200],
+                    '98': [200, 1600, 800, 2200],
+                    '99': [290, 320, 98, 128],
+                    '100': [200, 1600, 800, 2200],
+            }
+            xlim = map_name_id_to_bounds[map_name_id][:2]
+            ylim = map_name_id_to_bounds[map_name_id][2:]
+            self.ax0[0].set_xlim(*xlim)
+            self.ax0[0].set_ylim(*ylim)
+            # self.ax0[0].set_xlim(400, 1400)
+            # self.ax0[0].set_ylim(1000, 2000)
             # self.ax0[0].set_xlim(0, 1750)
             # self.ax0[0].set_ylim(500, 2250)
 
@@ -207,34 +226,33 @@ class Animation_():
                             self.ego_pos_x = obj.pose.x
                             self.ego_pos_y = obj.pose.y
 
-                        new_yaw = obj.pose.yaw + -np.rad2deg(self.random_rotation)
+                        # new_yaw = obj.pose.yaw + -np.rad2deg(self.random_rotation)
                         new_pos_y, new_pos_x = rotate_point((obj.pose.y, obj.pose.x), self.random_rotation, (center_x, center_y))
+
+                        self.ax0[0].add_patch(patches.Circle((new_pos_y, new_pos_x), obj.width/2, fill=None, ec='r'))
 
                         # text label for vehicle
                         # self.ax0[0].plot(obj.pose.y, obj.pose.x,  ".-r", label=label_name)
                         # rectangle
-                        width, length = obj.width, obj.length
-                        # Calculate rectangle origin
-                        rect_origin_x = (-obj.length/2) * np.cos(new_yaw*np.pi/180.0) \
-                                        - (-obj.width/2) * np.sin(new_yaw*np.pi/180.0) \
-                                        + new_pos_x
-                        rect_origin_y = (-obj.length/2) * np.sin(new_yaw*np.pi/180.0) \
-                                        + (-obj.width/2) * np.cos(new_yaw*np.pi/180.0) \
-                                        + new_pos_y
-                        self.ax0[0].add_patch(patches.Rectangle((rect_origin_y, rect_origin_x),
-                                                                 width, length,
-                                                                 angle=-new_yaw,
-                                                                 ec='r', fill=False))
-                        # Draw arrow for yaw
-                        arrow_length = .6
-                        if not self.args.vr:
-                            arrow_length *= WORLD_TO_IMG_SCALE
-                        # dy = arrow_length * np.sin(obj.pose.yaw*np.pi/180.0)
-                        # dx = arrow_length * np.cos(obj.pose.yaw*np.pi/180.0)
-                        dy = arrow_length * np.sin(new_yaw*np.pi/180.0)
-                        dx = arrow_length * np.cos(new_yaw*np.pi/180.0)
-                        self.ax0[0].arrow(new_pos_y, new_pos_x, dy, dx, head_width=0.05, fc='r', ec='r')
-                        # self.ax0[0].arrow(obj.pose.y, obj.pose.x, dy, dx, head_width=0.05, fc='r', ec='r')
+                        # width, length = obj.width, obj.length
+                        # # Calculate rectangle origin
+                        # rect_origin_x = (-obj.length/2) * np.cos(new_yaw*np.pi/180.0) \
+                        #                 - (-obj.width/2) * np.sin(new_yaw*np.pi/180.0) \
+                        #                 + new_pos_x
+                        # rect_origin_y = (-obj.length/2) * np.sin(new_yaw*np.pi/180.0) \
+                        #                 + (-obj.width/2) * np.cos(new_yaw*np.pi/180.0) \
+                        #                 + new_pos_y
+                        # self.ax0[0].add_patch(patches.Rectangle((rect_origin_y, rect_origin_x),
+                        #                                          width, length,
+                        #                                          angle=-new_yaw,
+                        #                                          ec='r', fill=False))
+                        # # Draw arrow for yaw
+                        # arrow_length = .6
+                        # if not self.args.vr:
+                        #     arrow_length *= WORLD_TO_IMG_SCALE
+                        # dy = arrow_length * np.sin(new_yaw*np.pi/180.0)
+                        # dx = arrow_length * np.cos(new_yaw*np.pi/180.0)
+                        # self.ax0[0].arrow(new_pos_y, new_pos_x, dy, dx, head_width=0.05, fc='r', ec='r')
                     else:  # not human nor vehicle
                         import ipdb; ipdb.set_trace()
                         prob_cut_in = False
@@ -337,6 +355,8 @@ class Animation_():
         # ticks
         self.ax0[0].set_xticklabels([])
         self.ax0[0].set_yticklabels([])
+        plt.tick_params(axis='both', which='both', bottom=False, top=False, labelbottom=False, right=False, left=False,
+                        labelleft=False)
 
         # ### RGB Spectator Image ###
         # self.ax0[2].clear()
@@ -391,13 +411,14 @@ def mp4_to_gif(input_file, output_file, fps):
     print(f"saved gif to {output_file}")
 
 
-def execute(target_date, target_dir_name, target_dir, fpath, args=None):
+def execute(target_date, target_dir_name, target_dir, fpath, args=None, random_rotation=None):
     if args.vr:
         DataManager = data_manager.DataManager_()
     else:
         DataManager = DataManagerSimple()
         DataManager.set_log_root(target_dir)
-    animator = Animation_(args)
+
+    animator = Animation_(args,random_rotation)
     target_file_name = fpath.replace(target_dir + '/' + target_dir_name, "")
     file_name_list = target_file_name.split('/')
     savedir_supplement = ""
@@ -480,5 +501,6 @@ if __name__ == "__main__":
     with ProcessPoolExecutor(max_workers=20) as executor:
         for fpath in fpath_list:
             print("Start multi-processing")
+            random_rotation = np.random.uniform(0, 2 * np.pi)
             # executor.submit(execute, target_date, target_dir_name, target_dir, fpath)
-            executor.submit(execute, target_date, target_dir_name, target_dir, fpath, args)
+            executor.submit(execute, target_date, target_dir_name, target_dir, fpath, args,random_rotation)

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import traceback
+# WORLD_TO_IMG_SCALE = 1
 WORLD_TO_IMG_SCALE = 50
 import utility as utils
 
