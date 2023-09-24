@@ -30,11 +30,11 @@ class TimeSynclonizerMain_():
         # self.cam_qr_timesync_result_frame_end = None
         # self.cam_qr_timesync_result_timestamp_end = None
         
-        # # 0818 celine timesync info
-        # self.cam_qr_timesync_result_frame_start = 3804
-        # self.cam_qr_timesync_result_timestamp_start = 1692292106638
-        # self.cam_qr_timesync_result_frame_end = 25218
-        # self.cam_qr_timesync_result_timestamp_end = 1692292820035
+        # 0818 celine timesync info
+        self.cam_qr_timesync_result_frame_start = 3804
+        self.cam_qr_timesync_result_timestamp_start = 1692292106638
+        self.cam_qr_timesync_result_frame_end = 25218
+        self.cam_qr_timesync_result_timestamp_end = 1692292820035
         
         # # 0818 nathaniel timesync info
         # self.cam_qr_timesync_result_frame_start = 7433
@@ -48,11 +48,11 @@ class TimeSynclonizerMain_():
         # self.cam_qr_timesync_result_frame_end = 21405
         # self.cam_qr_timesync_result_timestamp_end = 1692297778278
         
-        # 0818 darren timesync info
-        self.cam_qr_timesync_result_frame_start = 4438
-        self.cam_qr_timesync_result_timestamp_start = 1692298554054
-        self.cam_qr_timesync_result_frame_end = 20847
-        self.cam_qr_timesync_result_timestamp_end = 1692299101340
+        # # 0818 darren timesync info
+        # self.cam_qr_timesync_result_frame_start = 4438
+        # self.cam_qr_timesync_result_timestamp_start = 1692298554054
+        # self.cam_qr_timesync_result_frame_end = 20847
+        # self.cam_qr_timesync_result_timestamp_end = 1692299101340
         
         self.cam_freq_ms = (1.0/30.00000) * 1e3
         

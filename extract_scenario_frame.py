@@ -127,7 +127,6 @@ def execute(target_date, target_dir_name, target_dir, fpath):
     file_name_list = target_file_name.split('/')
     savedir_supplement = ""
 
-
     for i in range(len(file_name_list)):
         if (i >= len(file_name_list)-1):
             pass

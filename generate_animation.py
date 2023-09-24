@@ -26,13 +26,13 @@ class AnimationGenerator_():
         
         # self.pose_image_root_dir = f'/media/kenta/ExtremePro/ego_exo/main/01_walk/001_walk/processed_data/vis_contact_poses3d/'
         self.pose_image_root_dir = f'{sets.POSE_DATA_ROOT_DIR}{sets.BIG_SEQUENCE}{sets.SUB_SEQUENCE}'
-        # self.target_cam = '/cam01/rgb/'
-        # self.pose_image_path = f'{self.pose_image_root_dir}{self.target_cam}'
+        self.target_cam = 'exo/cam07/images/'
+        self.cam_image_path = f'{self.pose_image_root_dir}{self.target_cam}'
         self.pose_image_path = f'{self.pose_image_root_dir}{sets.POSE_SUB_DIR}'
         
 
         self.output_path = f'{self.simdata_root_dir}{self.logdate}{self.logdir}'
-        self.output_video_name = f'{self.output_path}/processed/processed_video_comp.mp4'
+        self.output_video_name = f'{self.output_path}/processed/processed_video.mp4'
         # self.output_video_name = f'{self.output_path}/processed/processed_video_with_Carla_image_3rd.mp4'
         self.frame_rate = 20
 
@@ -43,15 +43,15 @@ class AnimationGenerator_():
             # === Generate mp4 data ===
             print("SimFrame:{} | PoseFrame:{}".format((int(frame_list[0])+start_frame), (int(frame_list[1])-pose_init_frame)))
             # print(f'{self.sim_image_path}{(int(frame_list[0])+start_frame):05d}.png')
-            image0_path = f'{self.pose_image_path}{(int(frame_list[1])-pose_init_frame):05d}.jpg' # Basic GoPro image
+            image0_path = f'{self.cam_image_path}{(int(frame_list[1])-pose_init_frame):05d}.jpg' # Basic GoPro image
             image1_path = f'{self.sim_image_path}{(int(frame_list[0])+start_frame):05d}.png'  # Simulation BEV image
             image2_path = f'{self.pose_image_path}{(int(frame_list[1])-pose_init_frame):05d}.jpg'  # Pose image
             image3_path = f'{self.pose3d_image_path}{(int(frame_list[1]-pose_init_frame)):05d}.png'  # Pose3d image
             image4_path = f'{self.carla_1st_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
             image5_path = f'{self.carla_3rd_person_image_path}{(int(frame_list[0])+start_frame):05d}.png'
-            image_paths = [image1_path, image2_path, image3_path]
+            # image_paths = [image1_path, image2_path, image3_path]
             # image_paths = [image5_path, image2_path, image3_path]
-            # image_paths = [image5_path, image2_path, image3_path]
+            image_paths = [image0_path, image5_path, image1_path]
             # image_paths = [image0_path, image1_path]
 
             images = [Image.open(path) for path in image_paths]
@@ -81,9 +81,9 @@ class AnimationGenerator_():
         # for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
         #     self.generate_frame(frame_list, start_frame, pose_init_frame, timesync_info)
         
-        with ProcessPoolExecutor(max_workers=20) as executor:
-            for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
-                executor.submit(self.generate_frame, frame_list, start_frame, pose_init_frame, timesync_info)
+        # with ProcessPoolExecutor(max_workers=10) as executor:
+        #     for frame_list in tqdm(timesync_info, desc='Generating combined images', unit='frames'):
+        #         executor.submit(self.generate_frame, frame_list, start_frame, pose_init_frame, timesync_info)
 
         # Generate video
         subprocess.run(['ffmpeg', '-r', str(self.frame_rate), '-f', 'image2', '-i', os.path.join(self.processed_image_path, '%05d.png'), '-pix_fmt', 'yuv420p', self.output_video_name])

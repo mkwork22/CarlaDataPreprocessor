@@ -39,14 +39,16 @@ class Animation_():
         
         # Animation
         self.fig0 = plt.figure(figsize=(9, 6))
+        # self.fig0 = plt.figure(figsize=(6, 6))
+        
         self.fig0.canvas.draw()
-        self.fig0.suptitle("ObjectVisualizer")
+        # self.fig0.suptitle("ObjectVisualizer")
         self.ax0 = [self.fig0.add_subplot(1, 1, 1),]
         
         if GENERATE_ANIM_WITH_IMAGE:
-            self.fig0 = plt.figure(figsize=(10, 6))
+            self.fig0 = plt.figure(figsize=(10, 6), facecolor='#e7e7e7')
             self.fig0.canvas.draw()
-            self.fig0.suptitle("ObjectVisualizer")
+            # self.fig0.suptitle("ObjectVisualizer")
             self.ax0 = [self.fig0.add_subplot(1, 2, 1),
                         self.fig0.add_subplot(2, 2, 2),
                         self.fig0.add_subplot(2, 2, 4)]
@@ -111,10 +113,14 @@ class Animation_():
         for idx_fig in range(len(LabelName)):
             self.ax0[idx_fig].clear()
 
-        self.fig0.suptitle("ObjectVisualizer" + "\n" + 
-                            'Seq:' + str('{:d}'.format(iter)) + "[-]" +
-                           "\n"
-                           )
+        # self.fig0.suptitle("ObjectVisualizer" + "\n" + 
+        #                     'Seq:' + str('{:d}'.format(iter)) + "[-]" +
+        #                    "\n"
+        #                    )
+        self.fig0.suptitle(
+                        'Frame:' + str('{:d}'.format(iter)) + "[-]" +
+                        "\n"
+                        )
         
         
         """
@@ -135,8 +141,12 @@ class Animation_():
                 # print(obj.object_type, obj.pose.x, obj.pose.y, obj.pose.yaw)
                 # === Title ===
                 if (obj.object_id == 600):
-                    self.fig0.suptitle("ObjectVisualizer" + "\n" + 
-                        'Seq:' + str('{:d}'.format(obj.seq_id)) + "[-]" +
+                    # self.fig0.suptitle("ObjectVisualizer" + "\n" + 
+                    #     'Seq:' + str('{:d}'.format(obj.seq_id)) + "[-]" +
+                    #     "\n"
+                    #     )
+                    self.fig0.suptitle(
+                        'Frame:' + str('{:d}'.format(obj.seq_id)) + "[-]" +
                         "\n"
                         )
                 
@@ -187,10 +197,10 @@ class Animation_():
                                                                  angle=-obj.pose.yaw,
                                                                  ec='r', fill=False))
                         # Draw arrow
-                        arrow_length = 3.0
+                        arrow_length = 2.0
                         dy = arrow_length * np.sin(obj.pose.yaw*np.pi/180.0)
                         dx = arrow_length * np.cos(obj.pose.yaw*np.pi/180.0)
-                        self.ax0[0].arrow(obj.pose.y, obj.pose.x, dy, dx, head_width=0.05, fc='r', ec='r')
+                        self.ax0[0].arrow(obj.pose.y, obj.pose.x, dy, dx, head_width=0.1, fc='r', ec='r')
                     else:
                         idx = 0
                         prob_cut_in = False
@@ -234,13 +244,18 @@ class Animation_():
         # self.ax0[0].plot(traj[:, 1], traj[:, 0], ".-r", label="wide path")
         self.ax0[0].set_xlim(self.ego_pos_y-10.0, self.ego_pos_y+10.0)
         self.ax0[0].set_ylim(self.ego_pos_x-10.0, self.ego_pos_x+10.0)
-        self.ax0[0].grid(True, zorder=10)
-        self.ax0[0].set_xlabel("Lateral position[m]")
-        self.ax0[0].set_ylabel("Longitudinal position[m]")
+        # self.ax0[0].grid(True, zorder=10)
+        self.ax0[0].grid(False)
+        # self.ax0[0].set_xlabel("Lateral position[m]")
+        # self.ax0[0].set_ylabel("Longitudinal position[m]")
         self.ax0[0].set_aspect("equal")
         
-        plt.savefig(f'{savedir}/{iter:05d}.png', format="png", dpi=300)
+        self.ax0[0].axis("off")
+        self.ax0[0].set_facecolor('#e7e7e7')
+        
         # plt.pause(1)
+        
+        plt.savefig(f'{savedir}/{iter:05d}.png', format="png", dpi=300)
         
     def get_map_name(self, data):
         map_name = None
@@ -263,12 +278,12 @@ class Animation_():
         print("save dir:", savedir)
 
         # === Single Processing ===
-        # for frame in range(DataManager.data_size):
-        #     self.output_image(savedir, frame)
+        for frame in range(DataManager.data_size):
+            self.output_image(savedir, frame)
     
-        with ProcessPoolExecutor(max_workers=10) as executor:
-            for frame in range(DataManager.data_size):
-                executor.submit(self.output_image, savedir, frame)
+        # with ProcessPoolExecutor(max_workers=10) as executor:
+        #     for frame in range(DataManager.data_size):
+        #         executor.submit(self.output_image, savedir, frame)
 
     
 def execute(target_date, target_dir_name, target_dir, fpath):
